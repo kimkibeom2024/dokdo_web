@@ -1,7 +1,8 @@
 {
-  "name": "dokdo_app",
+  "name": "dokdo_web",
   "version": "1.0.0",
-  "main": "dokdo_email.js",
+  "type": "module",
+  "main": "server.js",
   "dependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.7.2",
@@ -23,6 +24,7 @@
     "cors": "^2.8.5",
     "debug": "^4.4.1",
     "depd": "^2.0.0",
+    "dotenv": "^17.2.3",
     "dunder-proto": "^1.0.1",
     "ee-first": "^1.1.1",
     "encodeurl": "^2.0.0",
@@ -31,7 +33,7 @@
     "es-object-atoms": "^1.1.1",
     "escape-html": "^1.0.3",
     "etag": "^1.8.1",
-    "express": "^5.1.0",
+    "express": "^4.19.2",
     "finalhandler": "^2.1.0",
     "forwarded": "^0.2.0",
     "fresh": "^2.0.0",
@@ -82,6 +84,7 @@
     "streamsearch": "^1.1.0",
     "string_decoder": "^1.3.0",
     "toidentifier": "^1.0.1",
+    "twilio": "^5.10.3",
     "type-is": "^2.0.1",
     "typedarray": "^0.0.6",
     "typescript": "^5.9.3",
@@ -92,11 +95,19 @@
     "xtend": "^4.0.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "start:3100": "set PORT=3100 && node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimkibeom2024/dokdo_web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kimkibeom2024/dokdo_web/issues"
+  },
+  "homepage": "https://github.com/kimkibeom2024/dokdo_web#readme",
   "description": ""
 }

@@ -1,226 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>환경 신문</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      background-color: #f0f0f0;
-    }
-
-    .container {
-      position: relative;
-      display: inline-block;
-    }
-
-    #newspaper {
-      width: 800px;
-    }
-
-    #webcam, #captured {
-      position: absolute;
-      top: 70px;
-      left: 8px;
-      width: 218px;
-      height: 148px;
-      border: 2px solid black;
-      display: none;
-    }
-
-    #button-inside {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    #capture-btn {
-      background-color: red;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 15px 30px;
-      font-size: 20px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #capture-btn:hover {
-      background-color: darkred;
-    }
-
-    #countdown {
-      position: absolute;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 80px;
-      font-weight: bold;
-      color: yellow;
-      text-shadow: 2px 2px 8px black;
-      display: none;
-    }
-
-    #email-controls {
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
-      text-align: center;
-    }
-
-    #email-controls input[type="email"] {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-
-    #email-controls button {
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #email-controls button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>부산일보 : Busan Il Science High school Newspaper</title>
+<style>
+  body{margin:0;background:#0b0d10;color:#e7ebef;font-family:ui-sans-serif,system-ui}
+  header{padding:16px 20px;border-bottom:1px solid #1e2630;background:#0f141a}
+  main{padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  a.card{display:block;background:#141a20;border:1px solid #222c37;border-radius:14px;padding:12px;text-decoration:none;color:#dce4ec}
+  a.card:hover{border-color:#2f3d4a}
+  .thumb{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:#10151b}
+  .name{margin-top:8px;font-size:14px;color:#aab4bf;word-break:break-all}
+  .empty{opacity:.7;padding:18px}
+</style>
 </head>
 <body>
-  <h2>환경 신문</h2>
+<header><strong>templates/ 내 이미지 선택</strong></header>
+<main id="list"><div class="empty">템플릿을 불러오는 중…</div></main>
 
-  <div class="container" id="capture-area">
-    <img id="newspaper" src="newspaper.png" alt="신문 이미지" />
-    <video id="webcam" autoplay playsinline></video>
-    <canvas id="captured"></canvas>
-    <div id="countdown">5</div>
-
-    <div id="button-inside">
-      <button id="capture-btn" onclick="startCountdown()">사진 찍기</button>
-    </div>
-
-    <!-- 이메일 입력란 + 전송 버튼 -->
-    <div id="email-controls">
-      <input type="email" id="email" placeholder="이메일 주소 입력" />
-      <button onclick="sendPDFToServer()">📧 이메일로 전송</button>
-    </div>
-  </div>
-
-  <!-- 라이브러리들 -->
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <script>
-    const video = document.getElementById("webcam");
-    const canvas = document.getElementById("captured");
-    const ctx = canvas.getContext("2d");
-    const captureBtn = document.getElementById("capture-btn");
-    const countdownEl = document.getElementById("countdown");
-
-    const fixedWidth = 151;
-    const fixedHeight = 78;
-
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        video.srcObject = stream;
-
-        video.addEventListener("loadedmetadata", () => {
-          video.width = fixedWidth;
-          video.height = fixedHeight;
-          canvas.width = fixedWidth;
-          canvas.height = fixedHeight;
-          video.style.display = "block";
-        });
-      })
-      .catch((err) => {
-        alert("웹캠 접근 실패: " + err.message);
-      });
-
-    function capturePhoto() {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      video.style.display = "none";
-      canvas.style.display = "block";
-      captureBtn.style.display = "none";
-      countdownEl.style.display = "none";
-
-      // 이메일 입력란 + 전송 버튼 표시
-      document.getElementById("email-controls").style.display = "block";
-    }
-
-    function startCountdown() {
-      let count = 5;
-      countdownEl.innerText = count;
-      countdownEl.style.display = "block";
-      captureBtn.disabled = true;
-
-      const interval = setInterval(() => {
-        count--;
-        if (count > 0) {
-          countdownEl.innerText = count;
-        } else {
-          clearInterval(interval);
-          capturePhoto();
-          captureBtn.disabled = false;
-        }
-      }, 1000);
-    }
-
-    async function sendPDFToServer() {
-      const area = document.getElementById("capture-area");
-      await new Promise(resolve => setTimeout(resolve, 200));
-
-      html2canvas(area, {
-        useCORS: true,
-        allowTaint: true,
-        scale: 1
-      }).then(canvasImage => {
-        const imageData = canvasImage.toDataURL("image/png");
-        const { jsPDF } = window.jspdf;
-
-        const pdf = new jsPDF({
-          orientation: "portrait",
-          unit: "px",
-          format: [canvasImage.width, canvasImage.height]
-        });
-
-        pdf.addImage(imageData, "PNG", 0, 0, canvasImage.width, canvasImage.height);
-
-        const pdfBlob = pdf.output("blob");
-
-        const formData = new FormData();
-        formData.append('pdf', pdfBlob, 'dokdo_temp.pdf');
-        formData.append('email', document.getElementById('email').value.trim());
-
-        fetch('http://localhost:3000/send-email', {
-          method: 'POST',
-          body: formData
-        }).then(response => response.json())
-          .then(result => {
-            if (result.success) {
-              alert('이메일 전송 성공! 페이지가 새로고침됩니다.');
-
-              // 자동 새로고침
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-
-            } else {
-              alert('이메일 전송 실패: ' + result.message);
-            }
-          }).catch(error => {
-            console.error('이메일 전송 오류:', error);
-            alert('이메일 전송 실패. 콘솔 확인하세요.');
-          });
-      });
-    }
-  </script>
+<script>
+async function load() {
+  const res = await fetch('/api/templates');
+  const files = await res.json();
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  if (!files.length) {
+    list.innerHTML = '<div class="empty">templates/ 폴더에 PNG/JPG를 넣어주세요.</div>';
+    return;
+  }
+  for (const f of files) {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = `/viewer?img=${encodeURIComponent(f.url)}`;
+    a.innerHTML = `
+      <img class="thumb" src="${f.url}" alt="">
+      <div class="name">${f.name}</div>
+    `;
+    list.appendChild(a);
+  }
+}
+load();
+</script>
 </body>
 </html>
